@@ -1,10 +1,21 @@
 import express from 'express'
+import router from './router'
+import morgan from 'morgan'
+import * as dotenv from 'dotenv'
+import { protect } from './modules/auth'
+import { createNewUser, signin } from './handler/user'
+dotenv.config()
+
 const app = express()
+app.use(morgan('dev'))
 
-app.get('/', (req, res) => {
-    res.send({ message: 'hello from express' })
-})
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-app.listen(301, () => {
+app.use('/api', protect, router)
+app.post('/user', createNewUser)
+app.post('/signin', signin)
+
+app.listen(3001, () => {
     console.log('server on local host 3001')
 })
